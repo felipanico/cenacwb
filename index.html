@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CENA | A cena que move a música</title>
+    <style>
+      :root {
+        --bg: #070b12;
+        --bg-soft: #0c1119;
+        --panel: rgba(17, 21, 28, 0.96);
+        --panel-strong: rgba(10, 13, 18, 0.98);
+        --line: rgba(220, 170, 255, 0.22);
+        --line-strong: rgba(220, 170, 255, 0.7);
+        --text: #f5f3f8;
+        --muted: rgba(255, 255, 255, 0.66);
+        --muted-soft: rgba(255, 255, 255, 0.42);
+        --purple: #d9a7ff;
+        --purple-strong: #bd6ef7;
+        --purple-deep: #8a4ad4;
+        --purple-glow: rgba(189, 110, 247, 0.28);
+        --shadow: rgba(4, 6, 12, 0.7);
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(189, 110, 247, 0.2), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(138, 74, 212, 0.2), transparent 30%),
+          var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      a { text-decoration: none; }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 20px 60px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 6px 8px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 58px;
+        height: 28px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(217, 167, 255, 0.8);
+        background: rgba(217, 167, 255, 0.08);
+        color: var(--purple);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .brand-name {
+        font-size: clamp(24px, 2.3vw, 42px);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+      }
+
+      .topbar small {
+        color: var(--muted-soft);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 28px;
+        padding: 42px 8px 18px;
+      }
+
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-bottom: 16px;
+        padding: 8px 12px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        background: rgba(217, 167, 255, 0.05);
+        color: var(--purple);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(46px, 5vw, 90px);
+        line-height: 0.92;
+        letter-spacing: -0.05em;
+      }
+
+      h1 .accent {
+        color: var(--purple);
+      }
+
+      .subtitle {
+        margin-top: 20px;
+        max-width: 680px;
+        color: var(--muted);
+        font-size: clamp(16px, 1.5vw, 20px);
+        line-height: 1.7;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 30px;
+      }
+
+      .button-primary,
+      .button-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 52px;
+        padding: 0 24px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 11px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .button-primary {
+        background: linear-gradient(135deg, var(--purple), var(--purple-strong));
+        color: #120d16;
+        box-shadow: 0 20px 38px rgba(189, 110, 247, 0.24);
+      }
+
+      .button-secondary {
+        background: transparent;
+        border-color: rgba(255,255,255,0.12);
+        color: var(--text);
+      }
+
+      .button-primary:hover,
+      .button-secondary:hover,
+      .profile-option:hover {
+        transform: translateY(-1px);
+      }
+
+      .hero-visual {
+        position: relative;
+        min-height: 430px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .visual-card {
+        position: relative;
+        width: min(100%, 420px);
+        min-height: 420px;
+        padding: 20px;
+        background: linear-gradient(180deg, rgba(18, 23, 31, 0.92), rgba(9, 12, 16, 0.98));
+        border: 1px solid var(--line);
+        border-radius: 32px;
+        box-shadow: 0 30px 60px var(--shadow);
+      }
+
+      .visual-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 4px 18px;
+        color: var(--muted-soft);
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .visual-stage {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 290px;
+        border-radius: 24px;
+        background:
+          radial-gradient(circle at center, rgba(217, 167, 255, 0.08), transparent 40%),
+          rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        overflow: hidden;
+      }
+
+      .stage-orbit {
+        position: absolute;
+        inset: 32px;
+        border: 2px solid rgba(217, 167, 255, 0.48);
+        border-radius: 50%;
+      }
+
+      .stage-orbit::before,
+      .stage-orbit::after {
+        content: "";
+        position: absolute;
+        inset: 42px;
+        border: 1px solid rgba(217, 167, 255, 0.32);
+        border-radius: 50%;
+      }
+
+      .stage-orbit::after {
+        inset: 82px;
+        border-color: rgba(217, 167, 255, 0.18);
+      }
+
+      .brand-core {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        z-index: 1;
+      }
+
+      .brand-core .word {
+        font-size: clamp(42px, 5vw, 74px);
+        font-weight: 900;
+        letter-spacing: 0.1em;
+      }
+
+      .brand-core .tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 78px;
+        height: 30px;
+        border-radius: 999px;
+        border: 1px solid var(--line-strong);
+        background: rgba(217, 167, 255, 0.08);
+        color: var(--purple);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .visual-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 18px;
+        color: var(--muted-soft);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .profile-section {
+        margin-top: 14px;
+        padding: 0 8px;
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .profile-header h2 {
+        margin: 0;
+        font-size: clamp(30px, 3vw, 44px);
+        letter-spacing: -0.05em;
+      }
+
+      .profile-header span {
+        color: var(--muted-soft);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .profile-selector {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .profile-option {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        min-height: 240px;
+        padding: 24px 22px 20px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(16, 20, 26, 0.9), rgba(9, 12, 16, 0.96));
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .profile-option.active {
+        border-color: var(--line-strong);
+        box-shadow: 0 0 0 1px rgba(217, 167, 255, 0.35), 0 30px 40px rgba(9, 9, 13, 0.55);
+        background: linear-gradient(180deg, rgba(23, 17, 28, 0.96), rgba(10, 12, 18, 0.98));
+      }
+
+      .profile-option-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .profile-option .kicker {
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted-soft);
+      }
+
+      .profile-option .status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(217, 167, 255, 0.08);
+        border: 1px solid rgba(217, 167, 255, 0.38);
+        color: var(--purple);
+        font-weight: 800;
+      }
+
+      .profile-option h3 {
+        margin: 0;
+        font-size: clamp(26px, 2.5vw, 38px);
+        line-height: 1;
+        letter-spacing: -0.05em;
+      }
+
+      .profile-option p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .profile-option ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        display: grid;
+        gap: 8px;
+        line-height: 1.5;
+      }
+
+      .insight-panel {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+        gap: 20px;
+      }
+
+      .insight-card,
+      .pillars {
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(15, 19, 25, 0.94), rgba(9, 12, 17, 0.98));
+      }
+
+      .insight-card {
+        padding: 22px 24px;
+      }
+
+      .insight-card h3 {
+        margin: 0 0 12px;
+        font-size: 32px;
+        letter-spacing: -0.05em;
+      }
+
+      .insight-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 16px;
+      }
+
+      .pillars {
+        padding: 22px 20px;
+      }
+
+      .pillars h4 {
+        margin: 0 0 16px;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted-soft);
+      }
+
+      .pillars ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      .pillars li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .pillars li::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--purple), var(--purple-strong));
+        box-shadow: 0 0 18px rgba(217, 167, 255, 0.8);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 26px;
+      }
+
+      .stat {
+        padding: 18px 16px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.02);
+      }
+
+      .stat strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: clamp(26px, 2vw, 40px);
+        letter-spacing: -0.06em;
+      }
+
+      .stat span {
+        color: var(--muted-soft);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      footer {
+        margin-top: 36px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted-soft);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 920px) {
+        .hero,
+        .insight-panel {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .profile-selector,
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar,
+        .profile-header,
+        footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">CWB</span>
+          <span class="brand-name">CENA</span>
+        </div>
+        <small>Movimento cultural &amp; musical</small>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">A cena que move a música</span>
+            <h1>
+              Conecte <span class="accent">artistas</span>, comunidade e cultura local.
+            </h1>
+            <p class="subtitle">
+              A CENA reúne quem produz, divulga e apoia a música da região. Aqui a cena local ganha
+              visibilidade, parceria e energia para crescer de verdade.
+            </p>
+            <div class="cta-row">
+              <button class="button-primary" type="button">Quero participar</button>
+              <button class="button-secondary" type="button">Conhecer a comunidade</button>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Visual identidade da marca CENA">
+            <div class="visual-card">
+              <div class="visual-header">
+                <span>Curitiba</span>
+                <span>Scene Lab</span>
+              </div>
+              <div class="visual-stage">
+                <div class="stage-orbit"></div>
+                <div class="brand-core">
+                  <span class="word">CENA</span>
+                  <span class="tag">Música</span>
+                </div>
+              </div>
+              <div class="visual-footer">
+                <span>Vibe local</span>
+                <span>Arte em movimento</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section" aria-label="Seleção de perfil">
+          <div class="profile-header">
+            <h2>Escolha seu perfil</h2>
+            <span>Como você faz parte da cena?</span>
+          </div>
+
+          <div class="profile-selector">
+            <button class="profile-option active" type="button" data-profile="creator">
+              <div class="profile-option-header">
+                <span class="kicker">Perfil</span>
+                <span class="status">01</span>
+              </div>
+              <h3>Criador da cena</h3>
+              <p>Se você produz som, cria cultura, organiza eventos e transforma a rua em palco.</p>
+              <ul>
+                <li>Divulgue shows e lançamentos</li>
+                <li>Conecte-se com outras referências</li>
+                <li>Acelere sua presença na cidade</li>
+              </ul>
+            </button>
+
+            <button class="profile-option" type="button" data-profile="supporter">
+              <div class="profile-option-header">
+                <span class="kicker">Perfil</span>
+                <span class="status">02</span>
+              </div>
+              <h3>Apoiador da cena</h3>
+              <p>Se você acredita no valor da música local e quer ajudar a cena a crescer com força.</p>
+              <ul>
+                <li>Descubra artistas e projetos locais</li>
+                <li>Apoie eventos e artistas independentes</li>
+                <li>Fortaleça a cultura da sua região</li>
+              </ul>
+            </button>
+          </div>
+        </section>
+
+        <section class="insight-panel">
+          <article class="insight-card" id="profile-content">
+            <h3 id="profile-title">Criador da cena</h3>
+            <p id="profile-copy">
+              Você é parte ativa do movimento cultural: produz música, organiza encontros, conecta artistas,
+              fortalece a identidade local e constrói uma rede que dá visibilidade para a região.
+            </p>
+          </article>
+
+          <aside class="pillars">
+            <h4>O que a CENA oferece</h4>
+            <ul>
+              <li>Visibilidade para artistas e projetos</li>
+              <li>Mais conexão entre comunidade e cultura</li>
+              <li>Espaço para eventos e produções locais</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section class="stats" aria-label="Estatísticas da cena">
+          <div class="stat">
+            <strong>220+</strong>
+            <span>Artistas ativos</span>
+          </div>
+          <div class="stat">
+            <strong>46</strong>
+            <span>Projetos locais</span>
+          </div>
+          <div class="stat">
+            <strong>9</strong>
+            <span>Bairros conectados</span>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>© 2026 CENA</span>
+        <span>Curitiba • cultura • música • comunidade</span>
+      </footer>
+    </div>
+
+    <script>
+      const profiles = {
+        creator: {
+          title: 'Criador da cena',
+          copy:
+            'Você é parte ativa do movimento cultural: produz música, organiza encontros, conecta artistas, fortalece a identidade local e constrói uma rede que dá visibilidade para a região.'
+        },
+        supporter: {
+          title: 'Apoiador da cena',
+          copy:
+            'Você acredita no potencial da cultura local e quer ajudar a música da região a crescer: apoiando artistas, divulgando eventos, investindo em comunidade e fortalecendo o cenário musical da cidade.'
+        }
+      };
+
+      const buttons = document.querySelectorAll('.profile-option');
+      const title = document.getElementById('profile-title');
+      const copy = document.getElementById('profile-copy');
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          buttons.forEach((item) => item.classList.remove('active'));
+          button.classList.add('active');
+
+          const profile = profiles[button.dataset.profile];
+          title.textContent = profile.title;
+          copy.textContent = profile.copy;
+        });
+      });
+    </script>
+  </body>
+</html>
